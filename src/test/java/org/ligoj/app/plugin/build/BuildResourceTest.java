@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import javax.transaction.Transactional;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -22,9 +24,9 @@ public class BuildResourceTest {
 	@Autowired
 	private BuildResource resource;
 
+	@Test
 	public void getKey() throws IOException {
-
 		// Coverage only
-		resource.getKey();
+		Assert.assertEquals("service:build", resource.getKey());
 	}
 }

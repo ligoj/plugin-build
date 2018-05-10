@@ -7,6 +7,7 @@ before_cache:
   - "find $HOME/.m2 -name resolver-status.properties -exec rm {} \\;"
 before_install: 
   - "chmod +x ./travis.sh"
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
 cache: 
   directories: 
     - $HOME/.m2/repository
@@ -20,7 +21,10 @@ branches:
     - master
     - dev
 install: /bin/true 
-jdk: oraclejdk9
+matrix:
+  include:
+      - env: JDK='OpenJDK 9'
+        install: . ./install-jdk.sh -F 9 -L GPL
 language: java
 notifications: 
   email: false

@@ -16,15 +16,12 @@ cache:
     - $HOME/maven
 env: 
   - TARGET=BUILD
+  - JDK='OpenJDK 9'
+install: . ./install-jdk.sh -F 9 -L GPL
 branches:
   only:
     - master
     - dev
-install: /bin/true 
-matrix:
-  include:
-      - env: JDK='OpenJDK 9'
-        install: . ./install-jdk.sh -F 9 -L GPL
 language: java
 notifications: 
   email: false

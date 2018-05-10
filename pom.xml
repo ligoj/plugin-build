@@ -14,6 +14,12 @@
 	<packaging>jar</packaging>
 	<name>Ligoj - Plugin Build</name>
 
+	<scm>
+		<connection>scm:git:https://github.com/ligoj/plugin-build</connection>
+		<developerConnection>scm:git:https://github.com/ligoj/plugin-build</developerConnection>
+		<url>https://github.com/ligoj/plugin-build.git</url>
+	</scm>
+
 	<profiles>
 		<profile>
 			<id>bintray</id>

@@ -26,18 +26,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(locations = "classpath:/META-INF/spring/application-context-test.xml")
 @Rollback
 @Transactional
-public class BuildResourceTest extends AbstractAppTest {
+class BuildResourceTest extends AbstractAppTest {
 
 	@Autowired
 	private BuildResource resource;
 
 	@BeforeEach
-	public void prepareData() throws IOException {
+	void prepareData() throws IOException {
 		persistEntities("csv", new Class[] { Node.class }, StandardCharsets.UTF_8.name());
 	}
 
 	@Test
-	public void getKey() {
+	void getKey() {
 		// Coverage only
 		Assertions.assertEquals("service:build", resource.getKey());
 	}

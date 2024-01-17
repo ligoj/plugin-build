@@ -33,7 +33,7 @@ class BuildResourceTest extends AbstractAppTest {
 
 	@BeforeEach
 	void prepareData() throws IOException {
-		persistEntities("csv", new Class[] { Node.class }, StandardCharsets.UTF_8);
+		persistEntities("csv", new Class<?>[] { Node.class }, StandardCharsets.UTF_8);
 	}
 
 	@Test

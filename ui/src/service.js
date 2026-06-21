@@ -7,47 +7,23 @@
  * rendering and the parent delegates — the `vm` → `vm-aws` pattern.
  *
  * So `build` contributes generic CI i18n (see ./i18n) plus delegation of
- * the subscription-row hooks to the build-<tool> sub-plugin.
+ * the subscription-row hooks to the build-<tool> sub-plugin. The
+ * delegation plumbing (`subPluginIdFor` / `delegateToToolPlugin`) is the
+ * host's shared `toolPluginId` / `delegateFeature` — identical across all
+ * service parents — re-exported here so existing callers keep working.
  *
  * Kept free of Vue SFC imports so it can be unit-tested without a DOM.
  */
-import { pluginRegistry } from '@ligoj/host'
+import { toolPluginId, delegateFeature } from '@ligoj/host'
 
 /**
- * Derive the sub-plugin id for a build tool subscription. A build node
- * id is `service:build:<tool>[:<instance>]` — segment 3 is the tool, so
- * `service:build:jenkins:1` → `build-jenkins`. Returns null when there
- * is no tool segment to delegate to.
+ * `service:build:jenkins:1` → `build-jenkins`; null when there is no tool
+ * segment to delegate to.
  */
-export function subPluginIdFor(subscription) {
-  const id = subscription?.node?.id || ''
-  const parts = id.split(':').filter(Boolean)
-  if (parts.length < 3) return null
-  return `${parts[1]}-${parts[2]}`
-}
+export const subPluginIdFor = toolPluginId
 
-/**
- * Calls `feature(action, subscription)` on the loaded build-<tool>
- * sub-plugin and returns its VNodes (or an empty array). Degrades to
- * `[]` when nothing is registered, the plugin lacks the action, or the
- * call throws — a sub-plugin must never break the parent's rendering.
- */
-export function delegateToToolPlugin(subscription, action) {
-  const subId = subPluginIdFor(subscription)
-  if (!subId) return []
-  const plugin = pluginRegistry.get(subId)
-  if (typeof plugin?.feature !== 'function') return []
-  try {
-    const result = plugin.feature(action, subscription)
-    if (result == null) return []
-    return Array.isArray(result) ? result : [result]
-  } catch (err) {
-    if (!new RegExp(`no feature ["']${action}["']`).test(err?.message || '')) {
-      console.warn(`[plugin:build] delegate to ${subId}.${action} threw`, err)
-    }
-    return []
-  }
-}
+/** Delegate `action` to the build-<tool> sub-plugin; `[]` on any failure. */
+export const delegateToToolPlugin = (subscription, action) => delegateFeature(subscription, action, 'build')
 
 const service = {
   subPluginIdFor,
@@ -55,8 +31,7 @@ const service = {
 
   /** Subscription-row buttons — delegated wholesale to the build-<tool>. */
   renderFeatures(subscription) {
-    const out = delegateToToolPlugin(subscription, 'renderFeatures')
-    return out.length ? out : []
+    return delegateToToolPlugin(subscription, 'renderFeatures')
   },
 
   /** Resource-key chips for the details column — delegated to the tool. */
